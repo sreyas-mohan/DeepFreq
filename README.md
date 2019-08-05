@@ -20,7 +20,7 @@ We compare the Frequency Representation constructed by different methods to that
 #### Frequency Counting
 <!--- ![freq_counting](./figures/counter.png) --->
 <p align="center"> <img src="./figures/counter.png" width='700'></p>
-For different data points, we generate a frequency representation using the FR module of DeepFreq. Figure shows the test error of different frequency counting techniques (DeepFreq, AIC and SORTE) on the frequency representation generated using DeepFreq. Error is computed by counting the fraction of signals in the test set for which the number of components is not estimated correctly. See section 3.3 for more details)
+For different data points, we generate frequency representation using the FR module of DeepFreq. Figure shows the test error of different frequency counting techniques (DeepFreq, AIC, MDL and SORTE) on the frequency representation generated using DeepFreq. Error is computed by counting the fraction of signals in the test set for which the number of components is not estimated correctly. (See section 3.3 for more details)
 
 #### Frequency Estimation
 <!--- ![freq_estimation](./figures/endtoend.png) --->
