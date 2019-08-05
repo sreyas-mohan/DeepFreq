@@ -13,13 +13,16 @@ We introduce a deep learned based framework to perform frequency estimation from
 
 ## Results
 #### Frequency Representation
-![freq_representation](./figures/fnr.png) 
+<!--- ![freq_representation](./figures/fnr.png =50x) --->
+<p align="center"> <img src="./figures/fnr.png" width='700'></p>
 We compare the Frequency Representation constructed by different methods to that of DeepFreq. For this experiment, we assume that the true number of sinusoidal components, m is known. We estimate the m components by locating the m highest maxima of the frequency representations constructed by different methods from noisy data. We quanify the quality of the estimate using False Negative Rate (FNR) defined as the number of true frequencies that are undetected. (See section 3.2 for more details)
 
 #### Frequency Counting
-![freq_counting](./figures/counter.png) 
+<!--- ![freq_counting](./figures/counter.png) --->
+<p align="center"> <img src="./figures/counter.png" width='700'></p>
 For different data points, we generate a frequency representation using the FR module of DeepFreq. Figure shows the test error of different frequency counting techniques (DeepFreq, AIC and SORTE) on the frequency representation generated using DeepFreq. Error is computed by counting the fraction of signals in the test set for which the number of components is not estimated correctly. See section 3.3 for more details)
 
 #### Frequency Estimation
-![freq_estimation](./figures/endtoend.png) 
+<!--- ![freq_estimation](./figures/endtoend.png) --->
+<p align="center"> <img src="./figures/endtoend.png" width='700'></p>
 We evaluate the frequency-estimation performance of DeepFreq in a realistic setting where both the noise level and the number of sinusoidal components are unknown. We compare our approach to an eigendecomposition-based procedure that combines MUSIC with AIC or MDL, as well as to the CBLasso, where frequencies are selected from the dual solution using a threshold calibrated with a validation dataset. We measure estimation accuracy by computing the [Chamfer distance](https://www.sciencedirect.com/science/article/pii/0734189X84900355) between the true frequencies and the estimates. (See section 3.5 for more details)
