@@ -26,3 +26,9 @@ For different data points, we generate a frequency representation using the FR m
 <!--- ![freq_estimation](./figures/endtoend.png) --->
 <p align="center"> <img src="./figures/endtoend.png" width='700'></p>
 We evaluate the frequency-estimation performance of DeepFreq in a realistic setting where both the noise level and the number of sinusoidal components are unknown. We compare our approach to an eigendecomposition-based procedure that combines MUSIC with AIC or MDL, as well as to the CBLasso, where frequencies are selected from the dual solution using a threshold calibrated with a validation dataset. We measure estimation accuracy by computing the [Chamfer distance](https://www.sciencedirect.com/science/article/pii/0734189X84900355) between the true frequencies and the estimates. (See section 3.5 for more details)
+
+## Code and Pre-trained Models
+
+### pre-trained models
+The directory `pretrained_models` contains the pretained models of DeepFreq. 
+
