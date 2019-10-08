@@ -8,7 +8,6 @@ from data import fr, loss
 from data.source_number import aic_arr, sorte_arr, mdl_arr
 import util
 import matplotlib
-
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -22,7 +21,7 @@ params = {
     'axes.labelsize': 11,
     'text.usetex': True,
     'text.latex.unicode': True,
-    'figure.figsize': [7, 4]  # instead of 4.5, 4.5
+    'figure.figsize': [7, 4]
 }
 matplotlib.rcParams.update(params)
 plt.style.use('seaborn-deep')
@@ -36,11 +35,11 @@ if __name__ == '__main__':
     parser.add_argument('--fr_path', default=None, type=str, required=True,
                         help='Frequency representation module path.')
     parser.add_argument('--counter_path', default=None, type=str,
-                        help='Counter module path. If None only the frequency representation module is tested')
+                        help='Counter module path. If None only the frequency representation module is tested.')
     parser.add_argument('--psnet_path', default=None, type=str,
-                        help='Path of the psnet.')
+                        help='PSnet path.')
     parser.add_argument('--psnet_counter_path', default=None, type=str,
-                        help='Path of the counter module associated with the psnet.')
+                        help='Path of the counter module associated with the PSnet.')
     parser.add_argument('--cblasso_dir', default='test_dataset/cblasso_results', type=str,
                         help='Directory containing CBLasso performance on test data')
     parser.add_argument('--output_dir', default=None, type=str, required=True,
@@ -215,7 +214,7 @@ if __name__ == '__main__':
         ax.set_ylim(bottom=0.)
         handles, labels = ax.get_legend_handles_labels()
         ax.legend(handles[::-1], labels[::-1])
-        plt.savefig(os.path.join(args.output_dir, 'counter.pdf'), bbox_inches='tight', pad_inches=0.0)
+        plt.savefig(os.path.join(args.output_dir, 'counting.pdf'), bbox_inches='tight', pad_inches=0.0)
         plt.close()
 
         if os.path.isfile(os.path.join(args.cblasso_dir, 'chamfer')):
@@ -238,5 +237,5 @@ if __name__ == '__main__':
         ax.set_ylabel('Chamfer error')
         handles, labels = ax.get_legend_handles_labels()
         ax.legend(handles[::-1], labels[::-1])
-        plt.savefig(os.path.join(args.output_dir, 'endtoend.pdf'), bbox_inches='tight', pad_inches=0.0)
+        plt.savefig(os.path.join(args.output_dir, 'chamfer.pdf'), bbox_inches='tight', pad_inches=0.0)
         plt.close()
