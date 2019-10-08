@@ -1,12 +1,20 @@
+# Code and Pretrained Networks from <br>"Data-driven Estimation of Sinusoid Frequencies"
 
+This repository contains information, code and models from the paper [Data-driven Estimation of Sinusoid Frequencies](https://arxiv.org/abs/1906.00823) by Gautier Izacard, Sreyas Mohan and [Carlos Fernandez-Granda](https://cims.nyu.edu/~cfgranda/). Please visit the [project webpage here](https://sreyas-mohan.github.io/DeepFreq/). 
 
 ## Code and Pre-trained Models
 
 ### pre-trained models
-The directory `pretrained_models` contains the pretained models of DeepFreq. 
+The directory [`pretrained_models`](pretrained_models) contains the pretained models of DeepFreq. 
+
+### Example code for using Pre-Trained models
+
+In [`example_notebook.ipynb`](example_notebook.ipynb), DeepFreq is applied to different signals and the results are visualized.  
+
 
 ### Train
-Train a model from scratch:
+
+[`train.py`](train.py) provides the code for training a model from scratch. An example usage of the script with some options is given below:
 
 ```shell
 python train.py \
@@ -16,11 +24,11 @@ python train.py \
 	--output_dir /checkpoint/experiment_name \
 ```
 
-See `train.py` for additional training options.
+Please refer to the `argparse` module in [`train.py`](train.py) for additional training options.
 
 ### Test
 
-Evaluate model performance against several baselines.
+[`test.py`](test.py) provides the script to bechmark the performance of DeepFreq against several baselines. An example usage of the script is provided below.
 
 
 ```shell
@@ -34,11 +42,12 @@ python test.py \
 	--overwrite
 ```
 
-The CBLasso implementation is based on the code available [here](http://www.lsta.upmc.fr/boyer/codes/html_CBlasso_vs_Blasso/script_example1_CBlasso_vs_Blasso.html). Since applying CBLasso to test data is long, the performance of CBLasso on `test_dataset` is provided in `CBLasso_test`.
+The implementation of CBLasso is based on the code available [here](http://www.lsta.upmc.fr/boyer/codes/html_CBlasso_vs_Blasso/script_example1_CBlasso_vs_Blasso.html). CBLasso takes a long time to run, therefore, the result of running CBLasso on [`test_dataset`](test_dataset) is precomputed and provided in [`CBLasso_test`](CBLasso_test).
 
 
-### `generate_dataset.py`: Generate test data
+### Generate test data
 
+ [`generate_dataset.py`](`generate_dataset.py`) provides the code to generate data. An example usage is shown below:
 
 ```shell
 python generate_dataset.py \
@@ -49,8 +58,5 @@ python generate_dataset.py \
     	--dB 0 5 10 15 20 25 30 35 40 45 50 \
 ```
 
-The test data used in the original paper is available in the `test_dataset/` directory.
+The particular isntance of test data used in the original paper is available in the [`test_dataset`](test_dataset).
 
-### `example_notebook.ipynb`: Apply a pre-trained model
-
-In this notebook, DeepFreq is applied to different signals and the results are visualized. 
