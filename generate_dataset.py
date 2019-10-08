@@ -2,7 +2,6 @@ import os
 import argparse
 import torch
 import numpy as np
-from data import load_dataloader
 from data import noise
 from data.data import gen_signal
 import json

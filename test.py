@@ -11,7 +11,6 @@ import matplotlib
 
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from pandas import DataFrame
 import seaborn as sns
 
 matplotlib.rcParams['font.family'] = 'serif'
@@ -27,25 +26,27 @@ params = {
 }
 matplotlib.rcParams.update(params)
 plt.style.use('seaborn-deep')
-palette = sns.color_palette("deep", 10)
+palette = sns.color_palette('deep', 10)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--data_dir", type=str, required=True,
-                        help="The data dir. Should contain the .npy files for the tested dB and the frequency file.")
-    parser.add_argument("--fr_path", default=None, type=str, required=True,
-                        help="Frequency representation module path.")
-    parser.add_argument("--counter_path", default=None, type=str,
-                        help="Counter module path. If None only the frequency representation module is tested")
-    parser.add_argument("--psnet_path", default=None, type=str,
-                        help="Path of the psnet.")
-    parser.add_argument("--psnet_counter_path", default=None, type=str,
-                        help="Path of the counter module associated with the psnet.")
-    parser.add_argument("--output_dir", default=None, type=str, required=True,
-                        help="The output directory where the results will be written.")
+    parser.add_argument('--data_dir', type=str, required=True,
+                        help='The data dir. Should contain the .npy files for the tested dB and the frequency file.')
+    parser.add_argument('--fr_path', default=None, type=str, required=True,
+                        help='Frequency representation module path.')
+    parser.add_argument('--counter_path', default=None, type=str,
+                        help='Counter module path. If None only the frequency representation module is tested')
+    parser.add_argument('--psnet_path', default=None, type=str,
+                        help='Path of the psnet.')
+    parser.add_argument('--psnet_counter_path', default=None, type=str,
+                        help='Path of the counter module associated with the psnet.')
+    parser.add_argument('--cblasso_dir', default='test_dataset/cblasso_results', type=str,
+                        help='Directory containing CBLasso performance on test data')
+    parser.add_argument('--output_dir', default=None, type=str, required=True,
+                        help='The output directory where the results will be written.')
     parser.add_argument('--overwrite', action='store_true',
-                        help="Overwrite the content of the output directory")
+                        help='Overwrite the content of the output directory')
 
     args = parser.parse_args()
 
@@ -74,7 +75,7 @@ if __name__ == '__main__':
             psnet_counter_model.eval()
 
     if os.path.exists(args.output_dir) and os.listdir(args.output_dir) and not args.overwrite:
-        raise ValueError("Output directory ({}) already exists and is not empty. Use --overwrite to overcome.".format(
+        raise ValueError('Output directory ({}) already exists and is not empty. Use --overwrite to overcome.'.format(
             args.output_dir))
     elif not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
@@ -103,7 +104,7 @@ if __name__ == '__main__':
 
         data_path = os.path.join(args.data_dir, str(dB[k]) + 'dB.npy')
         if not os.path.exists(data_path):
-            warnings.warn("{:.1f}dB data not in data directory.".format(dB[k]))
+            warnings.warn('{:.1f}dB data not in data directory.'.format(dB[k]))
 
         noisy_signals = np.load(data_path)
         noisy_signals = torch.tensor(noisy_signals)
@@ -176,19 +177,19 @@ if __name__ == '__main__':
             music_aic_chamfer.append(chamfer_music_aic / num_test)
             music_mdl_chamfer.append(chamfer_music_mdl / num_test)
 
-    fp_data = DataFrame(index=dB)
-    fp_data['Neural Network'] = model_fnr_arr
-    fp_data['MUSIC'] = music_fnr_arr
-    fp_data['Periodogram'] = periodogram_fnr_arr
-    fp_data.to_csv(os.path.join(args.output_dir, 'fnr.csv'))
-    sdp_fp = DataFrame.from_csv(
-        '/home/izacard/spectral_superresolution/results/sdp/1000_50_10_1_normal_normal_floor_0.1_1000_fpdatadb.csv')
+    if os.path.isfile(os.path.join(args.cblasso_dir, 'fnr')):
+        with open(os.path.join(args.cblasso_dir, 'fnr')) as f:
+            cblasso_fnr = json.load(f)
+        cblasso_fnr = [cblasso_fnr[str(x)] for x in dB]
+    else:
+        cblasso_fnr = None
 
     fig, ax = plt.subplots()
     ax.grid(linestyle='--', linewidth=0.5)
     ax.plot(dB, music_fnr_arr, label='MUSIC', marker='^', linestyle='--', c=palette[0])
     ax.plot(dB, periodogram_fnr_arr, label='Periodogram', marker='p', linestyle='--', c=palette[8])
-    ax.plot(dB, sdp_fp['sdp'][:len(dB)].values, label='CBLasso', marker='o', linestyle='--', c=palette[2])
+    if cblasso_fnr is not None:
+        ax.plot(dB, cblasso_fnr, label='CBLasso', marker='o', linestyle='--', c=palette[2])
     if args.psnet_path is not None:
         ax.plot(dB, psnet_fnr_arr, label='PSnet', marker='h', linestyle=':', c=palette[5])
     ax.plot(dB, model_fnr_arr, label='DeepFreq', marker='d', c=palette[3])
@@ -217,12 +218,18 @@ if __name__ == '__main__':
         plt.savefig(os.path.join(args.output_dir, 'counter.pdf'), bbox_inches='tight', pad_inches=0.0)
         plt.close()
 
-        cblasso_loss = DataFrame.from_csv('/home/izacard/spectral_superresolution/chamfer_calibrated.csv')
+        if os.path.isfile(os.path.join(args.cblasso_dir, 'chamfer')):
+            with open(os.path.join(args.cblasso_dir, 'chamfer')) as f:
+                cblasso_chamfer = json.load(f)
+            cblasso_chamfer = [cblasso_chamfer[str(x)] for x in dB]
+        else:
+            cblasso_chamfer = None
         fig, ax = plt.subplots()
         ax.grid(linestyle='--', linewidth=0.5)
         ax.semilogy(dB, music_aic_chamfer, label='AIC + MUSIC', marker='^', linestyle='--', c=palette[0])
         ax.semilogy(dB, music_mdl_chamfer, label='MDL + MUSIC', marker='v', linestyle='--', c=palette[1])
-        ax.semilogy(dB, cblasso_loss['chamfer'][:len(dB)], label='CBLasso', marker='o', linestyle='--', c=palette[2])
+        if cblasso_chamfer is not None:
+            ax.semilogy(dB, cblasso_chamfer, label='CBLasso', marker='o', linestyle='--', c=palette[2])
         if args.psnet_path is not None and args.psnet_counter_path is not None:
             ax.plot(dB, psnet_chamfer, label='PSnet + Counter', marker='h', linestyle=':', c=palette[5])
         ax.semilogy(dB, model_chamfer, label='DeepFreq', marker='d', c=palette[3])
@@ -233,5 +240,3 @@ if __name__ == '__main__':
         ax.legend(handles[::-1], labels[::-1])
         plt.savefig(os.path.join(args.output_dir, 'endtoend.pdf'), bbox_inches='tight', pad_inches=0.0)
         plt.close()
-
-    print(args.output_dir)

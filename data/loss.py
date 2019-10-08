@@ -35,5 +35,4 @@ def chamfer(f_estimate, f_target):
         b = (f_estimate[:, i] != -10.)
         dist_f_estimate += dist_i*b
     dist = (dist_f_estimate + dist_f_target)
-    return dist
-    #return np.sum(dist)
+    return np.sum(dist)
