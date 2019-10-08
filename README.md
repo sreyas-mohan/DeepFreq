@@ -44,15 +44,15 @@ Evaluate model performance against several baselines.
 ```shell
 python test.py \
 	--data_dir test_dataset/ \
-  --output_dir results/ \
-  --fr_path pretrained_models/DeepFreq/fr_module.pth \
-  --counter_path pretrained_models/DeepFreq/counter_module.pth \
-  --psnet_path pretrained_models/PSnet/psnet.pth \
+  	--output_dir results/ \
+  	--fr_path pretrained_models/DeepFreq/fr_module.pth \
+  	--counter_path pretrained_models/DeepFreq/counter_module.pth \
+  	--psnet_path pretrained_models/PSnet/psnet.pth \
 	--psnet_counter_path pretrained_models/PSnet/counter_psnet.pth \
 	--overwrite
 ```
 
-The CBLasso implementation is based on the code available [here](http://www.lsta.upmc.fr/boyer/codes/html_CBlasso_vs_Blasso/script_example1_CBlasso_vs_Blasso.html). Since applying CBLasso to test data is long, the performance of CBLasso on `test_dataset/` is provided in `CBLasso_test/`.
+The CBLasso implementation is based on the code available [here](http://www.lsta.upmc.fr/boyer/codes/html_CBlasso_vs_Blasso/script_example1_CBlasso_vs_Blasso.html). Since applying CBLasso to test data is long, the performance of CBLasso on `test_dataset` is provided in `CBLasso_test`.
 
 
 ### `generate_dataset.py`: Generate test data
