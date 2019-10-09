@@ -9,7 +9,7 @@ The directory [`pretrained_models`](pretrained_models) contains the pretained mo
 
 ### Example code for using Pre-Trained models
 
-In [`example_notebook.ipynb`](example_notebook.ipynb), DeepFreq is applied to different signals and the results are visualized.  
+In [`example_notebook.ipynb`](example_notebook.ipynb), DeepFreq is applied to different signals and the results are visualized.
 
 
 ### Train
@@ -42,8 +42,7 @@ python test.py \
 	--overwrite
 ```
 
-The implementation of CBLasso is based on the code available [here](http://www.lsta.upmc.fr/boyer/codes/html_CBlasso_vs_Blasso/script_example1_CBlasso_vs_Blasso.html). CBLasso takes a long time to run, therefore, the result of running CBLasso on [`test_dataset`](test_dataset) is precomputed and provided in [`CBLasso_test`](CBLasso_test).
-
+The implementation of CBLasso is based on the code available [here](http://www.lsta.upmc.fr/boyer/codes/html_CBlasso_vs_Blasso/script_example1_CBlasso_vs_Blasso.html). CBLasso takes a long time to run, therefore, the result of running CBLasso on [`test_dataset`](test_dataset) is precomputed and provided in [`test_dataset/cblasso_results`](test_dataset/cblasso_results). Performance of CBLasso is obtained with [`run_cblasso.py`](run_cblasso.py), it requires to install the MATLAB Engine API for Python.
 
 
 
