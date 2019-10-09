@@ -19,8 +19,11 @@ from data.loss import fnr
 logger = logging.getLogger(__name__)
 
 
-def train_eval_fr(args, fr_module, fr_optimizer, fr_criterion, fr_scheduler, train_loader, val_loader, xgrid,
-                  epoch, tb_writer):
+def train_frequency_representation(args, fr_module, fr_optimizer, fr_criterion, fr_scheduler, train_loader, val_loader,
+                                   xgrid, epoch, tb_writer):
+    """
+    Train the frequency-representation module for one epoch
+    """
     epoch_start_time = time.time()
     fr_module.train()
     loss_train_fr = 0
@@ -62,8 +65,11 @@ def train_eval_fr(args, fr_module, fr_optimizer, fr_criterion, fr_scheduler, tra
                 fnr_val)
 
 
-def train_eval_fc(args, fr_module, fc_module, fc_optimizer, fc_criterion, fc_scheduler,
-                  train_loader, val_loader, epoch, tb_writer):
+def train_frequency_counting(args, fr_module, fc_module, fc_optimizer, fc_criterion, fc_scheduler, train_loader,
+                             val_loader, epoch, tb_writer):
+    """
+    Train the frequency-counting module for one epoch
+    """
     epoch_start_time = time.time()
     fr_module.eval()
     fc_module.train()
@@ -226,6 +232,7 @@ if __name__ == '__main__':
 
     np.random.seed(args.numpy_seed)
     torch.manual_seed(args.torch_seed)
+
     train_loader = dataset.make_train_data(args)
     val_loader = dataset.make_eval_data(args)
 
@@ -252,15 +259,15 @@ if __name__ == '__main__':
     for epoch in range(start_epoch, args.n_epochs_fc + args.n_epochs_fr + 1):
 
         if epoch < args.n_epochs_fr:
-            train_eval_fr(args=args, fr_module=fr_module, fr_optimizer=fr_optimizer, fr_criterion=fr_criterion,
-                          fr_scheduler=fr_scheduler, train_loader=train_loader, val_loader=val_loader,
-                          xgrid=xgrid, epoch=epoch, tb_writer=tb_writer)
+            train_frequency_representation(args=args, fr_module=fr_module, fr_optimizer=fr_optimizer, fr_criterion=fr_criterion,
+                                           fr_scheduler=fr_scheduler, train_loader=train_loader, val_loader=val_loader,
+                                           xgrid=xgrid, epoch=epoch, tb_writer=tb_writer)
         else:
-            train_eval_fc(args=args, fr_module=fr_module, fc_module=fc_module,
-                          fc_optimizer=fc_optimizer, fc_criterion=fc_criterion,
-                          fc_scheduler=fc_scheduler, train_loader=train_loader,
-                          val_loader=val_loader, epoch=epoch, tb_writer=tb_writer)
+            train_frequency_counting(args=args, fr_module=fr_module, fc_module=fc_module,
+                                     fc_optimizer=fc_optimizer, fc_criterion=fc_criterion,
+                                     fc_scheduler=fc_scheduler, train_loader=train_loader,
+                                     val_loader=val_loader, epoch=epoch, tb_writer=tb_writer)
 
-        if epoch % args.save_epoch_freq == 0 or epoch == args.n_epochs:
+        if epoch % args.save_epoch_freq == 0 or epoch == args.n_epochs_fr + args.n_epochs_fc:
             util.save(fr_module, fr_optimizer, fr_scheduler, args, epoch, args.fr_module_type)
             util.save(fc_module, fc_optimizer, fc_scheduler, args, epoch, 'fc')

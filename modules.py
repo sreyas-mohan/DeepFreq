@@ -13,8 +13,9 @@ def set_fr_module(args):
         assert args.fr_size == args.fr_inner_dim * args.fr_upsampling, \
             'The desired size of the frequency representation (fr_size) must be equal to inner_dim*upsampling'
         net = FrequencyRepresentationModule(signal_dim=args.signal_dim, n_filters=args.fr_n_filters,
-                                            inner_dim=args.fr_inner_dim, n_layers=args.fr_n_layers, upsampling=args.fr_upsampling,
-                                            kernel_size=args.fr_kernel_size, kernel_out=args.fr_kernel_out)
+                                            inner_dim=args.fr_inner_dim, n_layers=args.fr_n_layers,
+                                            upsampling=args.fr_upsampling, kernel_size=args.fr_kernel_size,
+                                            kernel_out=args.fr_kernel_out)
     else:
         raise NotImplementedError('Frequency representation module type not implemented')
     if args.use_cuda:
@@ -26,15 +27,16 @@ def set_fc_module(args):
     """
     Create a frequency-counting module
     """
-    assert args.fr_size % args.c_downsampling == 0, \
-        'The downsampling factor (c_downsampling) does not divide the frequency representation size (fr_size)'
+    assert args.fr_size % args.fc_downsampling == 0, \
+        'The downsampling factor (fc_downsampling) does not divide the frequency representation size (fr_size)'
     net = None
     if args.fc_module_type == 'regression':
         net = FrequencyCountingModule(n_output=1, n_layers=args.fc_n_layers, n_filters=args.fc_n_filters,
-                                      kernel_size=args.fc_kernel_size, fr_size=args.fr_size, downsampling=args.fc_downsampling,
-                                      kernel_in=args.fc_kernel_in)
-    elif args.c_module_type == 'classification':
-        net = FrequencyCountingModule(n_output=args.max_num_freq, n_layers=args.fc_n_layers, n_filters=args.fc_n_filters)
+                                      kernel_size=args.fc_kernel_size, fr_size=args.fr_size,
+                                      downsampling=args.fc_downsampling, kernel_in=args.fc_kernel_in)
+    elif args.fc_module_type == 'classification':
+        net = FrequencyCountingModule(n_output=args.max_num_freq, n_layers=args.fc_n_layers,
+                                      n_filters=args.fc_n_filters)
     else:
         NotImplementedError('Counter module type not implemented')
     if args.use_cuda:
