@@ -41,10 +41,6 @@ def make_train_data(args):
         kernel_param = args.triangle_slope / args.signal_dim
     else:
         kernel_param = args.gaussian_std / args.signal_dim
-    # if args.max_train_freq <= 0:
-    #     max_n_freq = args.max_n_freq
-    # else:
-    #     max_n_freq = args.max_train_freq
     return load_dataloader(args.n_training, signal_dim=args.signal_dim, max_n_freq=args.max_n_freq,
                            min_sep=args.min_sep, distance=args.distance, amplitude=args.amplitude,
                            floor_amplitude=args.floor_amplitude, kernel_type=args.kernel_type,

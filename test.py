@@ -8,6 +8,7 @@ from data import fr, loss
 from data.source_number import aic_arr, sorte_arr, mdl_arr
 import util
 import matplotlib
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -33,13 +34,13 @@ if __name__ == '__main__':
     parser.add_argument('--data_dir', type=str, required=True,
                         help='The data dir. Should contain the .npy files for the tested dB and the frequency file.')
     parser.add_argument('--fr_path', default=None, type=str, required=True,
-                        help='Frequency representation module path.')
-    parser.add_argument('--counter_path', default=None, type=str,
-                        help='Counter module path. If None only the frequency representation module is tested.')
+                        help='Frequency-representation module path.')
+    parser.add_argument('--fc_path', default=None, type=str,
+                        help='Frequency-counting module path. If None only the frequency representation module is tested.')
     parser.add_argument('--psnet_path', default=None, type=str,
                         help='PSnet path.')
-    parser.add_argument('--psnet_counter_path', default=None, type=str,
-                        help='Path of the counter module associated with the PSnet.')
+    parser.add_argument('--psnet_fc_path', default=None, type=str,
+                        help='Path of the frequency-counting module associated with the PSnet.')
     parser.add_argument('--cblasso_dir', default='test_dataset/cblasso_results', type=str,
                         help='Directory containing CBLasso performance on test data')
     parser.add_argument('--output_dir', default=None, type=str, required=True,
@@ -54,24 +55,24 @@ if __name__ == '__main__':
     fr_module.eval()
     xgrid = np.linspace(-0.5, 0.5, fr_module.fr_size, endpoint=False)
 
-    counter_module = None
-    if args.counter_path is not None:
-        counter_module, _, _, _, _ = util.load(args.counter_path, 'counter')
-        counter_module.cpu()
-        counter_module.eval()
+    fc_module = None
+    if args.fc_path is not None:
+        fc_module, _, _, _, _ = util.load(args.fc_path, 'fc')
+        fc_module.cpu()
+        fc_module.eval()
 
     psnet = None
-    psnet_counter_model = None
+    psnet_fc_model = None
     psnet_grid = None
     if args.psnet_path is not None:
         psnet, _, _, _, _ = util.load(args.psnet_path, 'fr')
         psnet.cpu()
         psnet.eval()
         psnet_grid = np.linspace(-0.5, 0.5, psnet.fr_size, endpoint=False)
-        if args.psnet_counter_path is not None:
-            psnet_counter_model, _, _, _, _ = util.load(args.psnet_counter_path, 'counter')
-            psnet_counter_model.cpu()
-            psnet_counter_model.eval()
+        if args.psnet_fc_path is not None:
+            psnet_fc_model, _, _, _, _ = util.load(args.psnet_fc_path, 'fc')
+            psnet_fc_model.cpu()
+            psnet_fc_model.eval()
 
     if os.path.exists(args.output_dir) and os.listdir(args.output_dir) and not args.overwrite:
         raise ValueError('Output directory ({}) already exists and is not empty. Use --overwrite to overcome.'.format(
@@ -82,10 +83,10 @@ if __name__ == '__main__':
         json.dump(args.__dict__, f, indent=2)
 
     music_fnr_arr, model_fnr_arr, periodogram_fnr_arr = [], [], []
-    psnet_fnr_arr, psnet_counter_acc = [], []
+    psnet_fnr_arr, psnet_fc_acc = [], []
     model_chamfer, music_aic_chamfer, music_mdl_chamfer = [], [], []
     psnet_chamfer = []
-    counter_acc, mdl_acc, aic_acc, sorte_acc = [], [], [], []
+    fc_acc, mdl_acc, aic_acc, sorte_acc = [], [], [], []
 
     assert os.path.exists(args.data_dir), 'Data directory does not exist'
 
@@ -110,21 +111,21 @@ if __name__ == '__main__':
 
         with torch.no_grad():
 
-            # Evaluate FNR of the frequency representation module
+            # Evaluate FNR of the frequency-representation module
             model_fr_torch = fr_module(noisy_signals)
             model_fr = model_fr_torch.cpu().numpy()
             f_model = fr.find_freq(model_fr, nfreq, xgrid)
             model_fnr_arr.append(100 * loss.fnr(f_model, f, signal_dim) / num_test)
 
-            # Evaluate accuracy of the counter module
-            if args.counter_path is not None:
-                model_counter = counter_module(model_fr_torch)
-                model_counter = model_counter.view(model_counter.size(0))
-                model_estimate = torch.round(model_counter).cpu().numpy()
+            # Evaluate accuracy of the frequency-counting module
+            if args.fc_path is not None:
+                model_fc = fc_module(model_fr_torch)
+                model_fc = model_fc.view(model_fc.size(0))
+                model_estimate = torch.round(model_fc).cpu().numpy()
                 model_err = 1 - (model_estimate == nfreq).sum() / num_test
-                counter_acc.append(100 * model_err)
-                f_model_counter = fr.find_freq(model_fr, model_estimate, xgrid, 50)
-                model_chamfer.append(loss.chamfer(f_model_counter, f) / num_test)
+                fc_acc.append(100 * model_err)
+                f_model_fc = fr.find_freq(model_fr, model_estimate, xgrid, 50)
+                model_chamfer.append(loss.chamfer(f_model_fc, f) / num_test)
 
             # Evalute FNR of the PSnet
             if psnet is not None:
@@ -133,15 +134,15 @@ if __name__ == '__main__':
                 f_psnet = fr.find_freq(psnet_fr, nfreq, psnet_grid)
                 psnet_fnr_arr.append(100 * loss.fnr(f_psnet, f, signal_dim) / num_test)
 
-                # Evaluate accuracy of the counter associated with the PSnet
-                if psnet_counter_model is not None:
-                    psnet_counter = psnet_counter_model(psnet_fr_torch)[:, 0]
-                    psnet_counter = psnet_counter.view(psnet_counter.size(0))
-                    psnet_counter_estimate = torch.round(psnet_counter).cpu().numpy()
-                    psnet_counter_err = 1 - (psnet_counter_estimate == nfreq).sum() / num_test
-                    psnet_counter_acc.append(100. * psnet_counter_err)
-                    f_psnet_counter = fr.find_freq(psnet_fr, psnet_counter_estimate, psnet_grid, 50)
-                    psnet_chamfer.append(loss.chamfer(f_psnet_counter, f) / num_test)
+                # Evaluate accuracy of the frequency-counting module associated with the PSnet
+                if psnet_fc_model is not None:
+                    psnet_fc = psnet_fc_model(psnet_fr_torch)[:, 0]
+                    psnet_fc = psnet_fc.view(psnet_fc.size(0))
+                    psnet_fc_estimate = torch.round(psnet_fc).cpu().numpy()
+                    psnet_fc_err = 1 - (psnet_fc_estimate == nfreq).sum() / num_test
+                    psnet_fc_acc.append(100. * psnet_fc_err)
+                    f_psnet_fc = fr.find_freq(psnet_fr, psnet_fc_estimate, psnet_grid, 50)
+                    psnet_chamfer.append(loss.chamfer(f_psnet_fc, f) / num_test)
 
         noisy_signals = noisy_signals.cpu().numpy()
         noisy_signals_c = noisy_signals[:, 0] + 1j * noisy_signals[:, 1]
@@ -153,22 +154,22 @@ if __name__ == '__main__':
         music_fnr_arr.append(100 * loss.fnr(f_music, f, signal_dim) / num_test)
         periodogram_fnr_arr.append(100 * loss.fnr(f_periodogram, f, signal_dim) / num_test)
 
-        if args.counter_path is not None:
-            aic_counter = aic_arr(noisy_signals_c, 22)
-            mdl_counter = mdl_arr(noisy_signals_c, 25)
-            sorte_counter = sorte_arr(noisy_signals_c, 25)
-            aic_err = 1 - (aic_counter == nfreq).sum() / num_test
-            mdl_err = 1 - (mdl_counter == nfreq).sum() / num_test
-            sorte_err = 1 - (sorte_counter == nfreq).sum() / num_test
+        if args.fc_path is not None:
+            aic_fc = aic_arr(noisy_signals_c, 22)
+            mdl_fc = mdl_arr(noisy_signals_c, 25)
+            sorte_fc = sorte_arr(noisy_signals_c, 25)
+            aic_err = 1 - (aic_fc == nfreq).sum() / num_test
+            mdl_err = 1 - (mdl_fc == nfreq).sum() / num_test
+            sorte_err = 1 - (sorte_fc == nfreq).sum() / num_test
             aic_acc.append(100 * aic_err)
             mdl_acc.append(100 * mdl_err)
             sorte_acc.append(100 * sorte_err)
 
-            music_ps_mdl = fr.music(noisy_signals_c, xgrid, mdl_counter, 25)
-            music_ps_aic = fr.music(noisy_signals_c, xgrid, aic_counter, 25)
+            music_ps_mdl = fr.music(noisy_signals_c, xgrid, mdl_fc, 25)
+            music_ps_aic = fr.music(noisy_signals_c, xgrid, aic_fc, 25)
 
-            f_music_aic = fr.find_freq(music_ps_aic, aic_counter, xgrid, 50)
-            f_music_mdl = fr.find_freq(music_ps_mdl, aic_counter, xgrid, 50)
+            f_music_aic = fr.find_freq(music_ps_aic, aic_fc, xgrid, 50)
+            f_music_mdl = fr.find_freq(music_ps_mdl, aic_fc, xgrid, 50)
 
             chamfer_music_aic = loss.chamfer(f_music_aic, f)
             chamfer_music_mdl = loss.chamfer(f_music_mdl, f)
@@ -199,16 +200,16 @@ if __name__ == '__main__':
     plt.savefig(os.path.join(args.output_dir, 'fnr.pdf'), bbox_inches='tight', pad_inches=0.0)
     plt.close()
 
-    if args.counter_path is not None:
+    if args.fc_path is not None:
 
         fig, ax = plt.subplots()
         ax.grid(linestyle='--', linewidth=0.5)
         ax.plot(dB, aic_acc, label='AIC', marker='^', linestyle='--', c=palette[0])
         ax.plot(dB, mdl_acc, label='MDL', marker='v', linestyle='--', c=palette[1])
         ax.plot(dB, sorte_acc, label='SORTE', marker='o', linestyle='--', c=palette[2])
-        if args.psnet_path is not None and args.psnet_counter_path is not None:
-            ax.plot(dB, psnet_counter_acc, label='PSnet + Counter', marker='h', linestyle=':', c=palette[5])
-        ax.plot(dB, counter_acc, label='DeepFreq', marker='d', c=palette[3])
+        if args.psnet_path is not None and args.psnet_fc_path is not None:
+            ax.plot(dB, psnet_fc_acc, label='PSnet + counting module', marker='h', linestyle=':', c=palette[5])
+        ax.plot(dB, fc_acc, label='DeepFreq', marker='d', c=palette[3])
         ax.set_xlabel('SNR (dB)')
         ax.set_ylabel('Error (\%)')
         ax.set_ylim(bottom=0.)
@@ -229,8 +230,8 @@ if __name__ == '__main__':
         ax.semilogy(dB, music_mdl_chamfer, label='MDL + MUSIC', marker='v', linestyle='--', c=palette[1])
         if cblasso_chamfer is not None:
             ax.semilogy(dB, cblasso_chamfer, label='CBLasso', marker='o', linestyle='--', c=palette[2])
-        if args.psnet_path is not None and args.psnet_counter_path is not None:
-            ax.plot(dB, psnet_chamfer, label='PSnet + Counter', marker='h', linestyle=':', c=palette[5])
+        if args.psnet_path is not None and args.psnet_fc_path is not None:
+            ax.plot(dB, psnet_chamfer, label='PSnet + counting module', marker='h', linestyle=':', c=palette[5])
         ax.semilogy(dB, model_chamfer, label='DeepFreq', marker='d', c=palette[3])
         ax.set(yscale='log')
         ax.set_xlabel('SNR (dB)')

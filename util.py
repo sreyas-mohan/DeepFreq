@@ -33,8 +33,8 @@ def save(model, optimizer, scheduler, args, epoch, module_type):
         checkpoint["scheduler"] = scheduler.state_dict()
     if not os.path.exists(os.path.join(args.output_dir, module_type)):
         os.makedirs(os.path.join(args.output_dir, module_type))
-    cp = os.path.join(args.output_dir, module_type, 'last.pth.tar')
-    fn = os.path.join(args.output_dir, module_type, 'epoch_'+str(epoch)+'.pth.tar')
+    cp = os.path.join(args.output_dir, module_type, 'last.pth')
+    fn = os.path.join(args.output_dir, module_type, 'epoch_'+str(epoch)+'.pth')
     torch.save(checkpoint, fn)
     symlink_force(fn, cp)
 
@@ -44,8 +44,8 @@ def load(fn, module_type):
     args = checkpoint['args']
     if module_type == 'fr':
         model = modules.set_fr_module(args)
-    elif module_type == 'counter':
-        model = modules.set_counter_module(args)
+    elif module_type == 'fc':
+        model = modules.set_fc_module(args)
     else:
         raise NotImplementedError('Module type not recognized')
     model.load_state_dict(checkpoint['model'])
@@ -59,10 +59,10 @@ def load(fn, module_type):
 def set_optim(args, module, module_type):
     if module_type == 'fr':
         optimizer = torch.optim.Adam(module.parameters(), lr=args.lr_fr)
-    elif module_type == 'counter':
-        optimizer = torch.optim.Adam(module.parameters(), lr=args.lr_counter)
+    elif module_type == 'fc':
+        optimizer = torch.optim.Adam(module.parameters(), lr=args.lr_fc)
     else:
-        raise(ValueError('Expected module_type to be fr_module or counter_module but got {}'.format(module_type)))
+        raise(ValueError('Expected module_type to be fr or fc but got {}'.format(module_type)))
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=7, factor=0.5, verbose=True)
     return optimizer, scheduler
 
