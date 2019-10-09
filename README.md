@@ -20,7 +20,7 @@ In [`example_notebook.ipynb`](example_notebook.ipynb), DeepFreq is applied to di
 python train.py \
 	--n_training 200000 \
 	--n_epochs_fr 200 \
-	--n_epochs_c 100 \
+	--n_epochs_fc 100 \
 	--output_dir /checkpoint/experiment_name \
 ```
 
@@ -36,13 +36,15 @@ python test.py \
 	--data_dir test_dataset/ \
   	--output_dir results/ \
   	--fr_path pretrained_models/DeepFreq/fr_module.pth \
-  	--counter_path pretrained_models/DeepFreq/counter_module.pth \
+  	--fc_path pretrained_models/DeepFreq/counter_module.pth \
   	--psnet_path pretrained_models/PSnet/psnet.pth \
-	--psnet_counter_path pretrained_models/PSnet/counter_psnet.pth \
+	--psnet_fc_path pretrained_models/PSnet/counter_psnet.pth \
 	--overwrite
 ```
 
 The implementation of CBLasso is based on the code available [here](http://www.lsta.upmc.fr/boyer/codes/html_CBlasso_vs_Blasso/script_example1_CBlasso_vs_Blasso.html). CBLasso takes a long time to run, therefore, the result of running CBLasso on [`test_dataset`](test_dataset) is precomputed and provided in [`CBLasso_test`](CBLasso_test).
+
+
 
 
 ### Generate test data
@@ -58,5 +60,5 @@ python generate_dataset.py \
     	--dB 0 5 10 15 20 25 30 35 40 45 50 \
 ```
 
-The particular isntance of test data used in the original paper is available in the [`test_dataset`](test_dataset).
+The particular instance of test data used in the original paper is available in the [`test_dataset`](test_dataset).
 
