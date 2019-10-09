@@ -8,7 +8,7 @@ eng = matlab.engine.start_matlab()
 eng.cd(r'sdp')
 
 
-def find_freq_sdp(signals, f):
+def find_freq_cbl(signals, f):
     nfreq = (f > -0.5).sum(axis=1)
     fest = -np.ones((f.shape[0], f.shape[1]))
     for i in tqdm(range(len(nfreq))):
@@ -23,7 +23,7 @@ def find_freq_sdp(signals, f):
     return fest
 
 
-def find_freq_sdp_thresh(signals, threshold, max_freq=10):
+def find_freq_cbl_thresh(signals, threshold, max_freq=10):
     fest = -np.ones((signals.shape[0], max_freq))
     for i in tqdm(range(signals.shape[0])):
         freqs = eng.find_freq_cbl_thresh(matlab.double(list(signals[i]), is_complex=True), threshold)
