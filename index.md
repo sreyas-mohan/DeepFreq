@@ -8,7 +8,7 @@ Frequency estimation is a fundamental problem in signal processing, with applica
 
 ![problem_illustration](./figures/problem_illustration.png) 
 
-In previous work, we proposed to perform frequency estimation by training a neural network, called a PSNet](https://math.nyu.edu/~cfgranda/pages/stuff/LearningBased.pdf), to output a learned representation with local maxima at the position of the frequency estimates. Here, we propose a novel neural-network architecture that produces a significantly more accurate representation, and combine it with an additional neural-network module trained to detect the number of frequencies. 
+In previous work, we proposed to perform frequency estimation by training a neural network, called a [PSNet](https://math.nyu.edu/~cfgranda/pages/stuff/LearningBased.pdf), to output a learned representation with local maxima at the position of the frequency estimates. Here, we propose a novel neural-network architecture that produces a significantly more accurate representation, and combine it with an additional neural-network module trained to detect the number of frequencies. 
 
 ![architecture](./figures/model.png) 
 
