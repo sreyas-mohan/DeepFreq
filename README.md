@@ -35,10 +35,10 @@ Please refer to the `argparse` module in [`train.py`](train.py) for additional t
 python test.py \
 	--data_dir test_dataset/ \
   	--output_dir results/ \
-  	--fr_path pretrained_models/DeepFreq/fr_module.pth \
-  	--fc_path pretrained_models/DeepFreq/counter_module.pth \
+  	--fr_path pretrained_models/DeepFreq/frequency_representation_module.pth \
+  	--fc_path pretrained_models/DeepFreq/frequency_counting_module.pth \
   	--psnet_path pretrained_models/PSnet/psnet.pth \
-	--psnet_fc_path pretrained_models/PSnet/counter_psnet.pth \
+	--psnet_fc_path pretrained_models/PSnet/frequency_counting_psnet.pth \
 	--overwrite
 ```
 
