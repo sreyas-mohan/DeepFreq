@@ -16,3 +16,6 @@ In previous work, we proposed to perform frequency estimation by training a neur
 This yields a fast, fully-automatic method for frequency estimation that achieves state-of-the-art results. In particular, it outperforms existing techniques by a substantial margin at medium-to-high noise levels. The following figure compares our methodology to two subspace-based methods that use the covariance matrix of the data, and a sparse-estimation method based on convex optimization. Estimation accuracy is measured using the [Chamfer distance](https://www.sciencedirect.com/science/article/pii/0734189X84900355) between the true frequencies and the estimates. 
 
 <p align="center"> <img src="./figures/chamfer.png" width='700'></p>
+
+## Pre-Trained Models and Code
+Please visit [our github page](https://github.com/sreyas-mohan/DeepFreq) for pre-trained models, code and instructions on how to use the code. [`example_notebook.html`](example_notebook) shows a demonstration of how to use our models. 
