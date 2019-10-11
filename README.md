@@ -9,7 +9,7 @@ The directory [`pretrained_models`](pretrained_models) contains the pretained mo
 
 ### Example code for using Pre-Trained models
 
-In [`example_notebook.ipynb`](example_notebook.ipynb), DeepFreq is applied to different signals and the results are visualized.
+In [`example_notebook.ipynb`](example_notebook.ipynb), DeepFreq is applied to different signals and the results are visualized. [`example_notebook.html`](example_notebook.html) gives a preview of the notebook on your browser. 
 
 
 ### Train
