@@ -4,7 +4,7 @@ This repository contains information, code and models from the paper [Data-drive
 
 ## Code and Pre-trained Models
 
-Please refer to `requirements.txt`(requirements.txt) for required packages. 
+Please refer to [`requirements.txt`](requirements.txt) for required packages. 
 
 ### pre-trained models
 The directory [`pretrained_models`](pretrained_models) contains the pretained models of DeepFreq. 
