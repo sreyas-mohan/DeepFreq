@@ -39,9 +39,11 @@ def save(model, optimizer, scheduler, args, epoch, module_type):
     symlink_force(fn, cp)
 
 
-def load(fn, module_type):
-    checkpoint = torch.load(fn)
+def load(fn, module_type, device = torch.device('cuda')):
+    checkpoint = torch.load(fn, map_location=device)
     args = checkpoint['args']
+    if device == torch.device('cpu'):
+        args.use_cuda = False
     if module_type == 'fr':
         model = modules.set_fr_module(args)
     elif module_type == 'fc':
