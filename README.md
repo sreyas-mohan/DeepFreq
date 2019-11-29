@@ -1,6 +1,6 @@
 # Code and Pretrained Networks from <br>"Data-driven Estimation of Sinusoid Frequencies"
 
-This repository contains information, code and models from the paper [Data-driven Estimation of Sinusoid Frequencies](https://arxiv.org/abs/1906.00823) by Gautier Izacard, Sreyas Mohan and [Carlos Fernandez-Granda](https://cims.nyu.edu/~cfgranda/). Please visit the [project webpage here](https://sreyas-mohan.github.io/DeepFreq/). 
+This repository contains information, code and models from the paper [Data-driven Estimation of Sinusoid Frequencies](https://arxiv.org/abs/1906.00823) by Gautier Izacard, [Sreyas Mohan](sreyas-mohan.github.io) and [Carlos Fernandez-Granda](https://cims.nyu.edu/~cfgranda/). Please visit the [project webpage here](https://sreyas-mohan.github.io/DeepFreq/). 
 
 ## Code and Pre-trained Models
 
