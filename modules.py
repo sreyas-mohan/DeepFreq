@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 
 
@@ -51,11 +52,19 @@ class PSnet(nn.Module):
         self.num_filters = n_filters
         self.in_layer = nn.Linear(2 * signal_dim, inner_dim, bias=False)
         mod = []
+
+        if torch.__version__ >= "1.7.0":
+            conv_padding =  "same"
+        elif torch.__version__ >= "1.5.0":
+            conv_padding = kernel_size // 2
+        else:
+            conv_padding = kernel_size - 1
+
         for n in range(n_layers):
             in_filters = n_filters if n > 0 else 1
             mod += [
                 nn.Conv1d(in_channels=in_filters, out_channels=n_filters, kernel_size=kernel_size,
-                          stride=1, padding=kernel_size // 2, bias=False),
+                          stride=1, padding=conv_padding, bias=False),
                 nn.BatchNorm1d(n_filters),
                 nn.ReLU()
             ]
@@ -79,9 +88,17 @@ class FrequencyRepresentationModule(nn.Module):
         self.n_filters = n_filters
         self.in_layer = nn.Linear(2 * signal_dim, inner_dim * n_filters, bias=False)
         mod = []
+
+        if torch.__version__ >= "1.7.0":
+            conv_padding =  "same"
+        elif torch.__version__ >= "1.5.0":
+            conv_padding = kernel_size // 2
+        else:
+            conv_padding = kernel_size - 1
+
         for n in range(n_layers):
             mod += [
-                nn.Conv1d(n_filters, n_filters, kernel_size=kernel_size, padding=kernel_size - 1, bias=False,
+                nn.Conv1d(n_filters, n_filters, kernel_size=kernel_size, padding=conv_padding, bias=False,
                           padding_mode='circular'),
                 nn.BatchNorm1d(n_filters),
                 nn.ReLU(),
