@@ -63,3 +63,34 @@ python generate_dataset.py \
 
 The particular instance of test data used in the original paper is available in the [`test_dataset`](test_dataset).
 
+## References
+
+If you find this repository useful, please consider citing the following works:
+
+[1] G. Izacard, S. Mohan, C. Fernandez-Granda [*Data-Driven Estimation of Sinusoid Frequencies*](https://proceedings.neurips.cc/paper/2019/file/d0010a6f34908640a4a6da2389772a78-Paper.pdf)
+
+```bibtex
+@inproceedings{izacard2019deepfreq,
+      title={Data-Driven Estimation of Sinusoid Frequencies}, 
+      author={Izacard, Gautier and Mohan, Sreyas and Fernandez-Granda, Carlos},
+      booktitle = {Advances in Neural Information Processing Systems},
+      year = {2019}
+      pages = {5127--5137},
+      volume = {32},
+      url = {https://proceedings.neurips.cc/paper/2019/file/d0010a6f34908640a4a6da2389772a78-Paper.pdf},
+}
+```
+
+[2] G. Izacard, B. Bernstein, C. Fernandez-Granda [*A Learning-based Framework for Line-spectra Super-resolution*](https://arxiv.org/abs/1811.05844)
+
+
+```bibtex
+@inproceedings{izacard2019learning
+	title={A Learning-based Framework for Line-spectra Super-resolution},
+  	author={Izacard, Gautier and Bernstein, Brett and Fernandez-Granda, Carlos},
+  	booktitle={IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
+	year={2019},
+  	pages={3632-3636},
+  	doi={10.1109/ICASSP.2019.8682882}
+}
+```
